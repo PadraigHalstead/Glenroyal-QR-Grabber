@@ -22,7 +22,7 @@ func main() {
 
 	router.GET("/api/qr", func(c *gin.Context) {
 		qrCode := os.Getenv("QR_CODE")
-		timestamp := c.Query("timestamp")
+		timestamp := os.Getenv("TIMESTAMP")
 
 		if isValidQRCode(qrCode) && isTimestampToday(timestamp) {
 			qr := gin.H{"code": qrCode}
@@ -36,11 +36,13 @@ func main() {
 		newQR := c.PostForm("qr")
 
 		if isValidQRCode(newQR) {
+			currentTime := time.Now().Format(time.RFC3339)
 
 			os.Setenv("QR_CODE", newQR)
+			os.Setenv("TIMESTAMP", currentTime)
+
 			updatedQR := gin.H{
-				"code":      newQR,
-				"timestamp": time.Now().Format(time.RFC3339),
+				"code": newQR,
 			}
 
 			c.JSON(200, updatedQR)

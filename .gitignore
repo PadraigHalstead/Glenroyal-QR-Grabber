@@ -1,3 +1,6 @@
 
-packages/qr-code/.env
+*/node_modules/*
+node_modules
+/node_modules/
 packages/mobile/.env
+packages/api/.env
