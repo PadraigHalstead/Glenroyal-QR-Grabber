@@ -21,7 +21,7 @@ export const Scan = ({navigation}) => {
     setScanned(true);
     const qr = data
     try {
-      navigation.replace("Validation", { data: qr })
+      navigation.replace("Confirmation", { data: qr })
     } catch (err) {
       navigation.replace("Home")
     }
