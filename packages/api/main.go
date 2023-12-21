@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"regexp"
 	"time"
@@ -33,7 +34,17 @@ func main() {
 	})
 
 	router.POST("/api/qr", func(c *gin.Context) {
-		newQR := c.PostForm("qr")
+		var jsonInput struct {
+			QR string `json:"qr"`
+		}
+
+		if err := c.BindJSON(&jsonInput); err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
+
+		newQR := jsonInput.QR
+		fmt.Printf("QR Code: %s\n", newQR)
 
 		if isValidQRCode(newQR) {
 			currentTime := time.Now().Format(time.RFC3339)
@@ -55,9 +66,15 @@ func main() {
 }
 
 func isValidQRCode(qrCode string) bool {
-	regex := regexp.MustCompile("[^a-zA-Z]+")
-	cleanedQRCode := regex.ReplaceAllString(qrCode, "")
-	return len(cleanedQRCode) == 15
+	regex := regexp.MustCompile("^[a-zA-Z0-9]{15}$")
+
+	// Check if the QR code matches the pattern
+	isValid := regex.MatchString(qrCode)
+
+	// Log the result
+	fmt.Printf("QR Code: %s, IsValid: %v\n", qrCode, isValid)
+
+	return isValid
 }
 
 func isTimestampToday(timestamp string) bool {
