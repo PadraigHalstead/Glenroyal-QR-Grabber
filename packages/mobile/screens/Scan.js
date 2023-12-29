@@ -3,8 +3,9 @@ import { View, Text } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { styles } from '../styles';
 import { StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
-export const Scan = ({navigation}) => {
+export const Scan = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
@@ -19,11 +20,11 @@ export const Scan = ({navigation}) => {
 
   const handleBarCodeScanned = ({ data }) => {
     setScanned(true);
-    const qr = data
+    const qr = data;
     try {
-      navigation.replace("Confirmation", { data: qr })
+      navigation.replace('Confirmation', { data: qr });
     } catch (err) {
-      navigation.replace("Home")
+      navigation.replace('Home');
     }
   };
 
@@ -42,4 +43,4 @@ export const Scan = ({navigation}) => {
       />
     </View>
   );
-}
+};

@@ -1,62 +1,58 @@
-export const Home = () => {
+import QRCode from 'react-qr-code';
+import React, { useEffect, useState } from 'react';
+import { View, Pressable, Text } from 'react-native';
 
-    [qr, setQR] = useState<string>("");
-    [err, setErr] = useState<string>("");
-  
-    useEffect = () => {
-        const options = ""
-      
-    }
-    
-    const get = () => {
-        const getQR = async () => {
-            
-            const options = {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(timestamp)
-            }
-        
-        
+import { StatusBar } from 'expo-status-bar';
+import { styles } from '../styles';
 
-            //Check QR, and timestamp
-            //if 200 
-            //timestamp is today and qr is valid, respond 200 and show qr
-            //else  400
-            // Get error message. Set err text,
-            //data 
-          }
-    }
-  
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Glenroyal QR Grabber</Text>
-        </View>
-        <Button title="Scan New QR" onPress={handleScanQR} />
-        {/* <QRCode value="https://example.com" /> */}
-        <StatusBar style="auto" />
-      </View>
-);
-}
+export const Home = ({ navigation }) => {
+  [qr, setQR] = useState('');
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'space-around',
-    },
-    header: {
-      backgroundColor: 'lightblue',
-      width: '100%',
-      alignItems: 'center',
-      padding: 10
-    },
-    headerText: {
-      fontSize: 24,
-      fontWeight: 'bold',
-    },
-  });
+  useEffect(() => {
+    get();
+  }, []);
+
+  const get = () => {
+    const getQR = async () => {
+      const options = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      try {
+        const data = await fetch('http://localhost:8080/api/qr', options);
+        if (data.status === 200) {
+          setQR(data.qr);
+        } else {
+          setQR('');
+        }
+      } catch (err) {
+        setQR('');
+      }
+    };
+    getQR();
+  };
+
+  return (
+    <View style={styles.container}>
+      {qr.length > 0 ? (
+        <QRCode value={qr} />
+      ) : (
+        <>
+          <Text style={styles.heading4}>QR Expired. Please scan a new QR</Text>
+          <Text />
+        </>
+      )}
+
+      <Pressable
+        style={styles.button}
+        onPress={() => {
+          navigation.replace('Scan');
+        }}
+      >
+        <Text style={styles.text}>Scan QR</Text>
+      </Pressable>
+    </View>
+  );
+};

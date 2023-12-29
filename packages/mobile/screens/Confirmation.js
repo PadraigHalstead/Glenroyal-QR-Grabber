@@ -1,13 +1,12 @@
-import * as React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styles } from '../styles';
-import Loading from '../components'
+import { Loading } from '../components/Loading';
+import { StatusBar } from 'expo-status-bar';
 
 export const Confirmation = ({ navigation, route }) => {
-
-const [isValidQR, setIsValidQR] = useState(false);
-const [isLoading, setIsLoading] = useState(false)
+  const [isValidQR, setIsValidQR] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -16,20 +15,19 @@ const [isLoading, setIsLoading] = useState(false)
   }, []);
 
   const validateQR = async () => {
-
     const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(route.params.data)
-    }
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(route.params.data),
+    };
 
     try {
-    const res = fetch('http://localhost:8080/api/qr', options)
-    if((await res).status == 200) {
+      const res = fetch('http://localhost:8080/api/qr', options);
+      if ((await res).status == 200) {
         setIsValidQR(true);
-    }
+      }
     } catch (err) {
       setIsValidQR(false);
     }
@@ -46,9 +44,11 @@ const [isLoading, setIsLoading] = useState(false)
           <Loading />
         ) : (
           <>
-            <Text style={styles.heading4}>Invalid QR. Please scan a valid QR</Text>
+            <Text style={styles.heading4}>
+              Invalid QR. Please scan a valid QR
+            </Text>
             <Text />
-  
+
             <Pressable style={styles.button} onPress={navigateToHomePage}>
               <Text style={styles.text}>Okay</Text>
             </Pressable>
@@ -57,7 +57,7 @@ const [isLoading, setIsLoading] = useState(false)
       </View>
     );
   };
-  
+
   const ValidQR = () => {
     return (
       <View style={styles.container}>
@@ -67,7 +67,7 @@ const [isLoading, setIsLoading] = useState(false)
           <View>
             <Text style={styles.heading4}>QR Updated</Text>
             <Text />
-  
+
             <Pressable style={styles.button} onPress={navigateToHomePage}>
               <Text style={styles.text}>Okay</Text>
             </Pressable>
@@ -76,11 +76,10 @@ const [isLoading, setIsLoading] = useState(false)
       </View>
     );
   };
-  
+
   return (
     <View style={styles.container}>
       {isValidQR ? <ValidQR /> : <InvalidQR />}
-      
     </View>
   );
 };
