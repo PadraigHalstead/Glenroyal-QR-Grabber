@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"time"
@@ -11,6 +12,13 @@ import (
 )
 
 func main() {
+
+	serverIP := os.Getenv("SERVER_IP")
+	serverPort := os.Getenv("SERVER_PORT")
+	if serverIP == "" || serverPort == "" {
+		log.Fatal("Server IP or Port not set in .env file.")
+	}
+
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -62,7 +70,7 @@ func main() {
 		}
 	})
 
-	router.Run(":8080")
+	router.Run(serverIP + ":" + serverPort)
 }
 
 func isValidQRCode(qrCode string) bool {
